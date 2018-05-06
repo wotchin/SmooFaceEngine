@@ -3,4 +3,7 @@
 import keras
 from model.SmooNet import smooNet_v2 as cnn
 
+from DataGenerator import DataGenerator
+
+
 
