@@ -6,14 +6,50 @@ import numpy as np
 
 
 class DataGenerator(object):
-    def __init__(self, dir_path, batch_size):
-        g = os.walk(dir_path)
-        lfw = {}
-        for item in g:
-            lfw[item[0]] = item[2]
-        self.data = lfw
+    def __init__(self, path, batch_size, input_size, dataset):
+        data = {}
+        num_people = 0
+        num_images = 0
+        # {people:[pic1,pic2] ...}
+        if dataset == "lfw":
+            g = os.walk(path)
+            for item in g:
+                num_people += 1
+                name = item[0]
+                photo_list = item[2]
+                bin_list = []
+                for photo in photo_list:
+                    img = cv2.imread(name + "/" + photo)
+                    bin_list.append(img)
+                    num_images += 1
+                data[name] = bin_list
+        elif dataset == "olivettifaces":
+            olive = cv2.imread(path)
+            if olive is None:
+                raise Exception("can not open the olivettifaces file")
+            label = 0
+            count = 1
+            num_images = 400
+            num_people = 40
+            bin_list = []
+            for row in range(20):
+                for column in range(20):
+                    bin_list.append(olive[row*57:(row+1)*57,column*47:(column+1)*47])
+                    if count % 10 == 0 and count != 0:
+                        data[label] = bin_list
+                        label += 1
+                        bin_list = []
+                    count += 1
+        else:
+            raise Exception("can not recognize this dataset")
+        self.data = data
         self.batch_size = batch_size
-        self.f = open("./dataGenerator.log", "a+")
+        self.f = open("./dataGenerator.log", "w+")
+        self.input_size = input_size
+        self.number = (num_people, num_images)
+
+    def get_number(self):
+        return self.number
 
     def __del__(self):
         self.f.close()
@@ -33,11 +69,13 @@ class DataGenerator(object):
         targets = []
 
         while True:
-            for people in data:
-                for photo in data[people]:
-                    img = cv2.imread(people + "/" + photo)
+            for name in data:
+                for photo in data[name]:
+                    if photo is None:
+                        continue
+                    img = self._preprocess_image(image=photo)
                     image_array.append(img)
-                    targets.append(one_hot[keys.index(people)])
+                    targets.append(one_hot[keys.index(name)])
 
                     if len(targets) == self.batch_size:
                         image_array = np.asarray(image_array)
@@ -58,11 +96,15 @@ class DataGenerator(object):
         pass
 
     def _preprocess_image(self, image):
-        '''
-        TODO:
-             gray and resize etc.
-        '''
-
+        if self.input_size[-1] == 1:
+            # 要求灰度图像
+            image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        input_size = self.input_size[:2]
+        image = cv2.resize(image, input_size)
+        image = np.asarray(image, dtype='float64') / 256
+        # 归一化
+        if len(image.shape) < 3:
+            image = np.expand_dims(image,-1)
         return image
 
     def _wrap(self, image_array, targets):
