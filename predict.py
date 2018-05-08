@@ -3,7 +3,7 @@ from keras import backend as K
 import numpy as np
 from numpy import linalg
 import cv2
-
+import os
 
 def get_feature_function(model_path, output_layer=20):
     model = keras.models.load_model(model_path)
@@ -40,20 +40,25 @@ def pearson_correlation(vector1, vector2):
 
 
 if __name__ == '__main__':
-    get_feature = get_feature_function(model_path="smooFace.23-1.000000.hdf5", output_layer=20)
+    get_feature = get_feature_function(model_path="./trained_models/smooFace.28-0.996528.hdf5", output_layer=20)
     features = []
-    for i in range(1, 6):
-        path = "./test/" + str(i) + ".jpg"
+    base_feature = None
+    l = list(list(os.walk("./test"))[0])[2]
+    l.sort()
+    for file in l:
+        path = "./test/" + file
         img = cv2.imread(path)
-        print(img.shape)
         img = cv2.resize(img, (64, 64))
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         img = np.expand_dims(img, -1)
         img = np.expand_dims(img, 0)
         feature = get_feature(img)
-        features.append(feature)
+        features.append((file,feature))
+        if file == "base.jpg":
+            base_feature = feature
 
-    for feature in features:
-        print(cosine_similarity(feature, features[0]),
-              euclidean_metric(feature, features[0]),
-              pearson_correlation(feature,features[0]))
+    for file,feature in features:
+        print(file,
+              cosine_similarity(feature, base_feature),
+              euclidean_metric(feature, base_feature),
+              pearson_correlation(feature,base_feature))

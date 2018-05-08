@@ -10,13 +10,16 @@ batch_size = 64
 generator = DataGenerator(dataset="olivettifaces",
                           path="./data/olivettifaces.jpg",
                           batch_size=batch_size,
-                          input_size= input_shape )
-num_classes , num_images = generator.get_number()
-print(num_classes,num_images)
+                          input_size= input_shape,
+                          is_shuffle=True,
+                          data_augmentation=4,
+                          validation_split=.2)
+num_classes , num_images ,training_set_size , validation_set_size = generator.get_number()
+print(num_classes,num_images,training_set_size,validation_set_size)
 num_epochs = 100
-patience = 100
-log_file_path = "./log.cvs"
-trained_models_path = "./smooFace"
+patience = 10
+log_file_path = "./log.csv"
+trained_models_path = "./trained_models/smooFace"
 
 model = cnn(input_shape,num_classes)
 model.compile(
@@ -37,11 +40,13 @@ model_checkpoint = ModelCheckpoint(model_names,
                                    save_best_only=True,
                                    save_weights_only=False)
 callbacks = [model_checkpoint, csv_logger, early_stop, reduce_lr]
-model.fit_generator(generator=generator.flow(),
-                    steps_per_epoch= int(num_images / batch_size) ,
+model.fit_generator(generator=generator.flow('train'),
+                    steps_per_epoch= int(training_set_size / batch_size) ,
                     epochs=num_epochs,
                     verbose=1,
-                    callbacks=callbacks)
+                    callbacks=callbacks,
+                    validation_data=generator.flow('validate'),
+                    validation_steps=int(validation_set_size) / batch_size)
 
 
 
