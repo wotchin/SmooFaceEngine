@@ -5,6 +5,7 @@ from numpy import linalg
 import cv2
 import os
 
+
 def get_feature_function(model_path, output_layer=20):
     model = keras.models.load_model(model_path)
     model.summary()
@@ -22,8 +23,8 @@ def cosine_similarity(vector1, vector2):
     val = np.dot(vector1, vector2)
     norm = linalg.norm(vector1) * linalg.norm(vector2)
     cos = val / norm  # 余弦值
-    # sim = 0.5 + 0.5 * cos  # 归一化
-    return cos
+    sim = 0.5 + 0.5 * cos  # 归一化
+    return sim
 
 
 def euclidean_metric(vector1, vector2):
@@ -53,12 +54,12 @@ if __name__ == '__main__':
         img = np.expand_dims(img, -1)
         img = np.expand_dims(img, 0)
         feature = get_feature(img)
-        features.append((file,feature))
+        features.append((file, feature))
         if file == "base.jpg":
             base_feature = feature
 
-    for file,feature in features:
+    for file, feature in features:
         print(file,
               cosine_similarity(feature, base_feature),
               euclidean_metric(feature, base_feature),
-              pearson_correlation(feature,base_feature))
+              pearson_correlation(feature, base_feature))
