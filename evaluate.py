@@ -153,7 +153,13 @@ def test_recognition():
                 y_score.append(1)  # True
             else:
                 y_score.append(0)  # False
+    correct = 0
+    # hamming distance
+    for i in range(200):
+        if y_true[i] == y_score[i]:
+            correct += 1
 
+    print("pre is " + str(correct / 200))
     fpr, tpr, t = roc_curve(y_true, y_score)
     roc_auc = auc(fpr, tpr)
 
