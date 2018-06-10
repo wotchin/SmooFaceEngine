@@ -18,7 +18,9 @@ class feature(object):
         img = np.expand_dims(img, -1)
         img = np.expand_dims(img, 0)
         vector = self.feature_function([img])[0]
-        return vector.flatten()
+        vector = vector.flatten()
+        print(vector)
+        return vector
 
     def cosine_similarity(self, vector1, vector2):
         # val = vector1.dot(vector2.T)  # 若为列向量则 vector1.T * vector2

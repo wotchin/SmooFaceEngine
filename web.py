@@ -43,14 +43,16 @@ def test():
 def predict():
     pic1 = request.files['pic1']
     pic2 = request.files['pic2']
-    pic1.save(os.path.join(app.root_path, app.config['UPLOAD_FOLDER'], pic1.filename))
-    pic2.save(os.path.join(app.root_path, app.config['UPLOAD_FOLDER'], pic2.filename))
-    vector1 = model.get_vector(pic1.filename)
-    vector2 = model.get_vector(pic2.filename)
+    pic1_path = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'], pic1.filename)
+    pic2_path = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'], pic2.filename)
+    pic1.save(pic1_path)
+    pic2.save(pic2_path)
+    vector1 = model.get_vector(pic1_path)
+    vector2 = model.get_vector(pic2_path)
     similarity = model.cosine_similarity(vector1,vector2)
-    os.unlink(pic1.filename)
-    os.unlink(pic2.filename)
-    return similarity
+    os.unlink(pic1_path)
+    os.unlink(pic2_path)
+    return str(similarity)
 
 
 if __name__ == "__main__":
