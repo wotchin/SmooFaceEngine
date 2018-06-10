@@ -1,7 +1,7 @@
 #!/usr/bin env python
 
 from keras.callbacks import EarlyStopping, ReduceLROnPlateau, CSVLogger, ModelCheckpoint
-from model.SmooNet import smooNet_v2 as cnn
+from feature.SmooNet import smooNet_v2 as cnn
 from DataGenerator import DataGenerator
 
 
