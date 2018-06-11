@@ -13,8 +13,9 @@ class feature(object):
 
     def get_vector(self,path):
         img = cv2.imread(path)
-        img = cv2.resize(img,(64, 64))
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        img = cv2.resize(img,(64, 64))
+        img = img / 256
         img = np.expand_dims(img, -1)
         img = np.expand_dims(img, 0)
         vector = self.feature_function([img])[0]
