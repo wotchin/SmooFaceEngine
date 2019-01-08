@@ -1,10 +1,10 @@
 import sys
-import tools_matrix as tools
+import mtcnn.tools_matrix as tools
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 import time
-from MTCNN import create_Kao_Onet, create_Kao_Rnet, create_Kao_Pnet
+from mtcnn.mtcnn_model import create_Kao_Onet, create_Kao_Rnet, create_Kao_Pnet
 
 
 Pnet = create_Kao_Pnet(r'12net.h5')
@@ -105,7 +105,7 @@ threshold = [0.6,0.6,0.7]
 
 while (True):
     # ret, img = cap.read()
-    img = cv2.imread('test.jpeg')
+    img = cv2.imread('manual_testing.jpeg')
 
     rectangles = detectFace(img, threshold)
     print(rectangles)
