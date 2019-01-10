@@ -11,7 +11,7 @@ batch_size = 64
 num_epochs = 1000
 patience = 100
 log_file_path = "./log.csv"
-cnn = "tiny_XCEPTION"
+cnn = "ResNet"
 trained_models_path = "./trained_models/" + cnn
 
 generator = DataGenerator(dataset="olivettifaces",

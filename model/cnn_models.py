@@ -337,5 +337,15 @@ def tiny_XCEPTION(input_shape, num_classes, l2_regularization=0.01):
     return model
 
 
-def resnet20():
-    pass
+def ResNet(input_shape, num_classes):
+    # wrap ResNet50 from keras
+    from keras.applications.resnet50 import ResNet50
+    input_tensor = Input(shape=input_shape, name="input")
+    x = ResNet50(include_top=False,
+                 weights=None,
+                 input_tensor=input_tensor,
+                 input_shape=None,
+                 pooling="avg",
+                 classes=num_classes)
+    x = Dense(units=2048, name="feature")(x.output)
+    return Model(inputs=input_tensor, outputs=x)

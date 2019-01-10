@@ -15,8 +15,8 @@ JUST FOR FUN!
 
 # Principle of SmooFaceNet
 We use deep CNN as the basic network. In this project,
- we implemented some cnn, such as VGG16, VIPL face net, 
- ResNet20 and XCEPTION and so on.
+ we implemented some cnn, such as VGGNet, VIPL face net, 
+ ResNet and XCEPTION and so on.
 
 We use AM-Softmax loss as the loss function here, rather than 
 triple loss or other metric learning loss. This is because 
