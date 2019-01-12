@@ -1,7 +1,7 @@
 #!/usr/bin env python
 
 from keras.callbacks import EarlyStopping, ReduceLROnPlateau, CSVLogger, ModelCheckpoint
-# DO NOT REMOVE this:
+# DO NOT REMOVE THIS:
 from model.cnn_models import *
 from utils.data_generator import DataGenerator
 from model.amsoftmax import wrap_cnn, amsoftmax_loss

@@ -11,11 +11,14 @@ from keras.models import Sequential
 from keras.regularizers import l2
 
 
+# from VIPLFaceNet
+# You can see the paper at:
+# https://arxiv.org/abs/1609.03892
 def VIPL_FaceNet(input_shape, num_classes):
-    # from VIPLFaceNet
     model = Sequential()
     model.add(InputLayer(input_shape=input_shape,
                          name="input"))
+
     # Conv layer 1 output shape (55, 55, 48)
     model.add(Conv2D(
         kernel_size=(9, 9),
