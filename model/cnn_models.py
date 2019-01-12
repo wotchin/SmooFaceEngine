@@ -6,6 +6,7 @@ from keras.layers import GlobalAveragePooling2D
 from keras.layers import InputLayer, Input
 from keras.layers import MaxPooling2D
 from keras.layers import SeparableConv2D
+from keras.layers import ZeroPadding2D, Add
 from keras.models import Model
 from keras.models import Sequential
 from keras.regularizers import l2
@@ -108,8 +109,13 @@ def VIPL_FaceNet(input_shape, num_classes):
     return model
 
 
-def VGG_Face(input_shape, num_classes):
-    # from VGG
+# implement VGGNet
+def VGGNet(input_shape, num_classes):
+    # Because VGGNet is more deep and there is many max pooling in the network,
+    # I do not suggest you inputting too small value of input_shape.
+    # The input shape of raw paper is (224, 224, 3)
+    assert input_shape[0] >= 224 and input_shape[1] >= 224
+
     model = Sequential()
     model.add(InputLayer(input_shape=input_shape,
                          name="input"))
@@ -124,8 +130,7 @@ def VGG_Face(input_shape, num_classes):
         kernel_size=(3, 3),
         activation="relu",
         filters=64,
-        strides=(1, 1),
-    ))
+        strides=(1, 1)))
 
     # pool1
     model.add(MaxPooling2D((2, 2), strides=(2, 2),
@@ -136,14 +141,12 @@ def VGG_Face(input_shape, num_classes):
         kernel_size=(3, 3),
         activation="relu",
         filters=128,
-        strides=(1, 1),
-    ))
+        strides=(1, 1)))
     model.add(Conv2D(
         kernel_size=(3, 3),
         activation="relu",
         filters=128,
-        strides=(1, 1),
-    ))
+        strides=(1, 1)))
 
     # pool2
     model.add(MaxPooling2D((2, 2), strides=(2, 2),
@@ -154,67 +157,57 @@ def VGG_Face(input_shape, num_classes):
         kernel_size=(3, 3),
         activation="relu",
         filters=256,
-        strides=(1, 1),
-    ))
+        strides=(1, 1)))
     model.add(Conv2D(
         kernel_size=(3, 3),
         activation="relu",
         filters=256,
-        strides=(1, 1),
-    ))
+        strides=(1, 1)))
     model.add(Conv2D(
         kernel_size=(3, 3),
         activation="relu",
         filters=256,
-        strides=(1, 1),
-    ))
+        strides=(1, 1)))
 
     # pool3
     model.add(MaxPooling2D((2, 2), strides=(2, 2),
                            padding='same'))
-
     # Conv 8-10
     model.add(Conv2D(
         kernel_size=(3, 3),
         activation="relu",
         filters=512,
-        strides=(1, 1),
-    ))
+        strides=(1, 1)))
+
     model.add(Conv2D(
         kernel_size=(3, 3),
         activation="relu",
         filters=512,
-        strides=(1, 1),
-    ))
+        strides=(1, 1)))
     model.add(Conv2D(
         kernel_size=(3, 3),
         activation="relu",
         filters=512,
-        strides=(1, 1),
-    ))
+        strides=(1, 1)))
     # pool4
     model.add(MaxPooling2D((2, 2), strides=(2, 2),
                            padding='same'))
-
     # Conv 11-13
     model.add(Conv2D(
         kernel_size=(3, 3),
         activation="relu",
         filters=512,
-        strides=(1, 1),
-    ))
+        strides=(1, 1)))
     model.add(Conv2D(
         kernel_size=(3, 3),
         activation="relu",
         filters=512,
-        strides=(1, 1),
-    ))
+        strides=(1, 1)))
     model.add(Conv2D(
         kernel_size=(3, 3),
         activation="relu",
         filters=512,
-        strides=(1, 1),
-    ))
+        strides=(1, 1)))
 
     # pool5
     model.add(MaxPooling2D((2, 2), strides=(2, 2), padding='same'))
@@ -239,7 +232,7 @@ def VGG_Face(input_shape, num_classes):
 
 
 # revised from face_classification
-# we can see source cnn via:
+# we can see source code at:
 # https://github.com/oarriaga/face_classification/blob/master/src/models/cnn.py
 def tiny_XCEPTION(input_shape, num_classes, l2_regularization=0.01):
     regularization = l2(l2_regularization)
@@ -340,8 +333,8 @@ def tiny_XCEPTION(input_shape, num_classes, l2_regularization=0.01):
     return model
 
 
-def ResNet(input_shape, num_classes):
-    # wrap ResNet50 from keras
+def ResNet50(input_shape, num_classes):
+    # wrap ResNet50 from keras, because ResNet50 is so deep.
     from keras.applications.resnet50 import ResNet50
     input_tensor = Input(shape=input_shape, name="input")
     x = ResNet50(include_top=False,
@@ -352,3 +345,63 @@ def ResNet(input_shape, num_classes):
                  classes=num_classes)
     x = Dense(units=2048, name="feature")(x.output)
     return Model(inputs=input_tensor, outputs=x)
+
+
+# implement ResNet's block.
+# I implement two classes block:
+# one is basic block, the other is bottleneck block.
+def basic_block(filters, kernel_size=3):
+    def f(x):
+        # f(x) named y
+        # 1st Conv
+        y = ZeroPadding2D(padding=1)(x)
+        y = Conv2D(filters, kernel_size)(y)
+        y = BatchNormalization(epsilon=1e-5)(y)
+        y = Activation("relu")(y)
+        # 2nd Conv
+        y = ZeroPadding2D(padding=1)(y)
+        y = Conv2D(filters, kernel_size)(y)
+        y = BatchNormalization(epsilon=1e-5)(y)
+        # f(x) + x
+        shotcut = Conv2D(filters, kernel_size=1)(x)
+        shotcut = BatchNormalization(epsilon=1e-5)(shotcut)
+        y = Add()([y, shotcut])
+        y = Activation("relu")(y)
+
+        return y
+
+    return f
+
+
+# ResNet v1, we can see the paper at:
+# https://arxiv.org/abs/1512.03385
+def ResNet18(input_shape, num_classes):
+    input_layer = Input(shape=input_shape, name="input")
+
+    # Conv1
+    x = Conv2D(filters=64, strides=2, kernel_size=7)(input_layer)
+    x = MaxPooling2D((3, 3), strides=(2, 2), padding='same')(x)
+
+    # Conv2
+    x = basic_block(filters=64)(x)
+    x = basic_block(filters=64)(x)
+
+    # Conv3
+    x = basic_block(filters=128)(x)
+    x = basic_block(filters=128)(x)
+
+
+    # Conv4
+    x = basic_block(filters=256)(x)
+    x = basic_block(filters=256)(x)
+
+    # Conv5
+    x = basic_block(filters=512)(x)
+    x = basic_block(filters=512)(x)
+
+    x = GlobalAveragePooling2D(name="feature")(x)
+    output_layer = Dense(num_classes, activation='softmax')(x)
+
+    model = Model(input_layer, output_layer)
+    return model
+
