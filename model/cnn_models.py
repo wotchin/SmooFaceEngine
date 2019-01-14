@@ -350,22 +350,31 @@ def ResNet50(input_shape, num_classes):
 # implement ResNet's block.
 # I implement two classes block:
 # one is basic block, the other is bottleneck block.
-def basic_block(filters, kernel_size=3):
+def basic_block(filters, kernel_size=3, is_first_block=True):
+    stride = 1
+    if is_first_block:
+        stride = 2
+
     def f(x):
         # f(x) named y
         # 1st Conv
         y = ZeroPadding2D(padding=1)(x)
-        y = Conv2D(filters, kernel_size)(y)
-        y = BatchNormalization(epsilon=1e-5)(y)
+        y = Conv2D(filters, kernel_size, strides=stride, kernel_initializer='he_normal')(y)
+        y = BatchNormalization()(y)
         y = Activation("relu")(y)
         # 2nd Conv
         y = ZeroPadding2D(padding=1)(y)
-        y = Conv2D(filters, kernel_size)(y)
-        y = BatchNormalization(epsilon=1e-5)(y)
+        y = Conv2D(filters, kernel_size, kernel_initializer='he_normal')(y)
+        y = BatchNormalization()(y)
+
         # f(x) + x
-        shotcut = Conv2D(filters, kernel_size=1)(x)
-        shotcut = BatchNormalization(epsilon=1e-5)(shotcut)
-        y = Add()([y, shotcut])
+        if is_first_block:
+            shortcut = Conv2D(filters, kernel_size=1, strides=stride, kernel_initializer='he_normal')(x)
+            shortcut = BatchNormalization()(shortcut)
+        else:
+            shortcut = x
+
+        y = Add()([y, shortcut])
         y = Activation("relu")(y)
 
         return y
@@ -379,29 +388,35 @@ def ResNet18(input_shape, num_classes):
     input_layer = Input(shape=input_shape, name="input")
 
     # Conv1
-    x = Conv2D(filters=64, strides=2, kernel_size=7)(input_layer)
-    x = MaxPooling2D((3, 3), strides=(2, 2), padding='same')(x)
+    x = layers.ZeroPadding2D(padding=(3, 3), name='conv1_pad')(input_layer)
+    x = layers.Conv2D(64, (7, 7),
+                      strides=(2, 2),
+                      padding='valid',
+                      kernel_initializer='he_normal',
+                      name='conv1')(x)
+    x = layers.BatchNormalization()(x)
+    x = layers.Activation('relu')(x)
+    x = layers.ZeroPadding2D(padding=(1, 1), name='pool1_pad')(x)
+    x = layers.MaxPooling2D((3, 3), strides=(2, 2))(x)
 
     # Conv2
     x = basic_block(filters=64)(x)
-    x = basic_block(filters=64)(x)
+    x = basic_block(filters=64, is_first_block=False)(x)
 
     # Conv3
     x = basic_block(filters=128)(x)
-    x = basic_block(filters=128)(x)
-
+    x = basic_block(filters=128, is_first_block=False)(x)
 
     # Conv4
     x = basic_block(filters=256)(x)
-    x = basic_block(filters=256)(x)
+    x = basic_block(filters=256, is_first_block=False)(x)
 
     # Conv5
     x = basic_block(filters=512)(x)
-    x = basic_block(filters=512)(x)
+    x = basic_block(filters=512, is_first_block=False)(x)
 
     x = GlobalAveragePooling2D(name="feature")(x)
     output_layer = Dense(num_classes, activation='softmax')(x)
 
     model = Model(input_layer, output_layer)
     return model
-
