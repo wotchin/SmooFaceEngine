@@ -8,6 +8,7 @@ from keras.models import Model
 class AMSoftmax(Layer):
     def __init__(self, units, **kwargs):
         self.units = units
+        self.kernel = None
         super(AMSoftmax, self).__init__(**kwargs)
 
     def build(self, input_shape):
@@ -20,10 +21,11 @@ class AMSoftmax(Layer):
         super(AMSoftmax, self).build(input_shape)
 
     def call(self, inputs, **kwargs):
-        inputs = tf.nn.l2_normalize(inputs, dim=1)
-        self.kernel = tf.nn.l2_normalize(self.kernel, dim=0)
-
-        cosine = K.dot(inputs, self.kernel)
+        # get cosine similarity
+        # cosine = x * w / (||x|| * ||w||)
+        inputs = K.l2_normalize(inputs, axis=1)
+        kernel = K.l2_normalize(self.kernel, axis=0)
+        cosine = K.dot(inputs, kernel)
         return cosine
 
     def compute_output_shape(self, input_shape):
@@ -31,30 +33,37 @@ class AMSoftmax(Layer):
 
     def get_config(self):
         config = {
-            'units': self.units
-        }
+            'units': self.units}
         base_config = super(AMSoftmax, self).get_config()
+
         return dict(list(base_config.items()) + list(config.items()))
 
 
+# reference:
+# https://github.com/hao-qiang/AM-Softmax/blob/master/AM-Softmax.ipynb
 def amsoftmax_loss(y_true, y_pred, scale=30.0, margin=0.35):
-    label = tf.reshape(tf.argmax(y_true, axis=-1), shape=(-1, 1))
-    label = tf.cast(label, dtype=tf.int32)
-    batch_range = tf.reshape(tf.range(tf.shape(y_pred)[0]), shape=(-1, 1))  # 0~batchsize-1
-    indices_of_ground_truth = tf.concat([batch_range, tf.reshape(label, shape=(-1, 1))],
-                                        axis=1)  # 2columns vector, 0~batchsize-1 and label
-    ground_truth_score = tf.gather_nd(y_pred, indices_of_ground_truth)  # score of groundtruth
+    label = K.reshape(K.argmax(y_true, axis=-1), shape=(-1, 1))
+    label = K.cast(label, dtype=tf.int32)
 
-    m = tf.constant(margin, name='m')
-    s = tf.constant(scale, name='s')
+    batch_range = K.reshape(tf.range(K.shape(y_pred)[0]), shape=(-1, 1))
+    # concat the two column vectors, one is the batch_range, the other is label.
+    indices_of_ground_truth = tf.concat([batch_range, K.reshape(label, shape=(-1, 1))], axis=1)
+    # score of ground truth
+    ground_truth_score = tf.gather_nd(y_pred, indices_of_ground_truth)
+    # make two const variables as tensor type.
+    m = K.constant(margin, name='m')
+    s = K.constant(scale, name='s')
 
-    added_margin = tf.cast(tf.greater(ground_truth_score, m),
-                           dtype=tf.float32) * m  # if ground_truth_score>m, ground_truth_score-m
-    added_margin = tf.reshape(added_margin, shape=(-1, 1))
-    added_embedding_feature = tf.subtract(y_pred, y_true * added_margin) * s  # s(cos_theta_yi-m), s(cos_theta_j)
+    # if ground_truth_score > m, group_truth_score = group_truth_score - m
+    added_margin = K.cast(K.greater(ground_truth_score, m), dtype=tf.float32) * m
+    added_margin = K.reshape(added_margin, shape=(-1, 1))
 
-    cross_ent = tf.nn.softmax_cross_entropy_with_logits(labels=y_true, logits=added_embedding_feature)
-    loss = tf.reduce_mean(cross_ent)
+    # s * (cos - m) if yi != j
+    added_embedding_feature = tf.subtract(y_pred, y_true * added_margin) * s
+
+    cross_entropy = tf.nn.softmax_cross_entropy_with_logits_v2(labels=y_true,
+                                                               logits=added_embedding_feature)
+    loss = tf.reduce_mean(cross_entropy)
     return loss
 
 
