@@ -36,7 +36,7 @@ def test_classifier():
         x_list.append(img)
         y = model.predict(x=img)
         y = int(np.argmax(y) / 2)
-        # 近似
+
         y_correct = int(label)
         total += 1
         if y == y_correct:
@@ -44,14 +44,15 @@ def test_classifier():
         matrix[y_correct][y] += 1
 
     k = kappa(matrix=matrix)
-    print("total is {0}, precise is {1}, kappa is {2}.".format(total, correct / total, k))
+    print("total is {0}, precise is {1}, kappa is {2}."
+          .format(total, correct / total, k))
 
 
 def test_recognition():
+    # This threshold is used to determine if two face images belong to the same person.
     threshold = 0.80
 
     model = load_model(filepath=model_path)
-
     f = get_feature_function(model)
     base_feature = f(cv2.imread("./olive/0_0.jpg"))
 
@@ -73,7 +74,6 @@ def test_recognition():
             else:
                 y_score.append(0)  # False
     correct = 0
-    # hamming distance
     for i in range(200):
         if y_true[i] == y_score[i]:
             correct += 1
@@ -86,7 +86,7 @@ def test_recognition():
     lw = 2
     plt.figure(figsize=(10, 10))
     plt.plot(fpr, tpr, color='darkorange',
-             lw=lw, label='ROC curve (area = %0.2f)' % roc_auc)  # 假正率为横坐标，真正率为纵坐标做曲线
+             lw=lw, label='ROC curve (area = %0.2f)' % roc_auc)
     plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='-.')
     plt.xlim([0.0, 1.0])
     plt.ylim([0.0, 1.05])

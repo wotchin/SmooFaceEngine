@@ -24,8 +24,9 @@ def get_feature_function(model, **kwargs):
     def inner(img):
         if isinstance(img, str):
             img = cv2.imread(img)
+            assert img is not None
         if not isinstance(img, np.ndarray):
-            raise Exception("img must be numpy.ndarray type.But input #1 argument type is "
+            raise Exception("img must be 'numpy.ndarray' type.But input #1 argument type is "
                             + str(type(img)))
         # preprocess
         img = cv2.resize(img, input_shape[:-1])

@@ -3,24 +3,27 @@ from numpy import linalg
 
 
 def cosine_similarity(vector1, vector2):
-    # val = vector1.dot(vector2.T)  # 若为列向量则 vector1.T * vector2
+    # if vector1 and vector2 are column vector, we can use:
+    # vector1.T * vector2
     val = np.dot(vector1, vector2)
+    # or:
+    # val = vector1.dot(vector2.T)
     norm = linalg.norm(vector1) * linalg.norm(vector2)
-    cos = val / norm  # 余弦值
-    sim = 0.5 + 0.5 * cos  # 归一化
+    cos = val / norm
+    sim = 0.5 + 0.5 * cos  # normalization
     return sim
 
 
 def euclidean_metric(vector1, vector2):
     dist = linalg.norm(vector1 - vector2)
-    met = 1.0 / (1.0 + dist)  # 归一化
+    met = 1.0 / (1.0 + dist)  # normalization
     return met
 
 
 def pearson_correlation(vector1, vector2):
-    x_ = vector1 - np.mean(vector1)
-    y_ = vector2 - np.mean(vector2)
-    d = np.dot(x_, y_) / (np.linalg.norm(x_) * np.linalg.norm(y_))
+    x = vector1 - np.mean(vector1)
+    y = vector2 - np.mean(vector2)
+    d = np.dot(x, y) / (np.linalg.norm(x) * np.linalg.norm(y))
     return d
 
 
@@ -35,5 +38,4 @@ def kappa(matrix):
         sum_pe += row * col
     po = sum_po / n
     pe = sum_pe / (n * n)
-    print(po, pe)
     return (po - pe) / (1 - pe)

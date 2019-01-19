@@ -11,7 +11,7 @@ batch_size = 64
 num_epochs = 1000
 patience = 100
 log_file_path = "./log.csv"
-cnn = "ResNet"
+cnn = "ResNet18"
 trained_models_path = "./trained_models/" + cnn
 
 generator = DataGenerator(dataset="olivettifaces",
@@ -33,7 +33,6 @@ model.compile(optimizer='adam',
               loss=amsoftmax_loss,
               metrics=['accuracy'])
 model.summary()
-
 # callbacks
 early_stop = EarlyStopping('loss', 0.1, patience=patience)
 reduce_lr = ReduceLROnPlateau('loss', factor=0.1,
