@@ -1,0 +1,5 @@
+*.pyc
+*.log
+*.csv
+*.hdf5
+.idea/
