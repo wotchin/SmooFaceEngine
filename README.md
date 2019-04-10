@@ -12,6 +12,7 @@ This project is an open source project about
 
 ## Why did this?
 JUST FOR FUN!
+I think I may be not a face recognition expert, but a geeker.
 
 # Principle of SmooFaceNet
 We use deep CNN as the basic network. In this project,
@@ -34,7 +35,7 @@ If you want to use this project in your production environment, you should do mo
 ## Web API
 >http://127.0.0.1:8080/test
 # Reference
-## Papers
+## Paper or core technology
 
 
     AM-Softmax
@@ -47,8 +48,23 @@ If you want to use this project in your production environment, you should do mo
 
 (shortening， you can search them in [Google Scholar](https://scholar.google.com/))
 ## Open source project
-waiting for updating
+
+1. https://github.com/xiangrufan/keras-mtcnn
+2. https://github.com/happynear/AMSoftmax
+3. https://github.com/Joker316701882/Additive-Margin-Softmax
+4. https://github.com/hao-qiang/AM-Softmax
+5. https://github.com/ageitgey/face_recognition
+6. https://github.com/oarriaga/face_classification
+7. https://github.com/seetaface/SeetaFaceEngine
+
+etc.
+
 # LICENSE
 Apache license version 2.0
 # How to contribute
-Just send a pull request(Merge Request) to me.
+  There are many bugs here, so you could send some pull requests or give some issues for this project. Thank you very much :)
+## TODO
+
+1. give train.py arguments: for different training set
+2. refactor: to optimize code
+3. ...
