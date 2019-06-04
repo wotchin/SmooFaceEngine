@@ -73,8 +73,11 @@ def get_feature_from_client(request_filename):
     # the program run much faster than saving it to disk.
     file = request.files[request_filename]
     stream = file.stream
-    if isinstance(stream, SpooledTemporaryFile):
-        stream = stream.file
+    # for old version flask:
+    """
+     if isinstance(stream, SpooledTemporaryFile):
+         stream = stream.file
+    """
     value = bytearray(stream.read())
     value = np.asarray(value, dtype='uint8')
     img = cv2.imdecode(value, 1)
