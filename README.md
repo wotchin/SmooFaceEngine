@@ -69,7 +69,7 @@ You can search the following papers in [Google Scholar](https://scholar.google.c
 5. https://github.com/ageitgey/face_recognition
 6. https://github.com/oarriaga/face_classification
 7. https://github.com/seetaface/SeetaFaceEngine
-
+8. https://github.com/jiankangdeng/handbook
 
 # LICENSE
 Apache license version 2.0
