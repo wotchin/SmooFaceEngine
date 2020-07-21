@@ -1,7 +1,7 @@
 # SmooFaceEngine
 An open source face recognition engine named SmooFaceEngine.
 
-Detailed technical principles: [《Python人脸识别：从入门到工程实践》](https://item.jd.com/12593612.html)
+[Read more relational papers](https://github.com/wotchin/paper-list/blob/master/computer-vision.md)
 
 [勘误表(errate)](https://github.com/wotchin/SmooFaceEngine/wiki/errata) 
 
