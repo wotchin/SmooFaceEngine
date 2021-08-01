@@ -1,7 +1,7 @@
 # SmooFaceEngine
 An open source face recognition engine.
 
-Support for Tensorflow-2.0.0+ @[branch tensorflow2.0.0+]()
+Support for Tensorflow-2.0.0+ @[branch tensorflow2.0.0+]
 
 [Read more relational papers](https://github.com/wotchin/paper-list/blob/master/computer-vision.md)
 
