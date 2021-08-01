@@ -1,15 +1,15 @@
-from keras import layers
-from keras.layers import Activation, Dropout, Conv2D, Dense
-from keras.layers import BatchNormalization
-from keras.layers import Flatten
-from keras.layers import GlobalAveragePooling2D
-from keras.layers import InputLayer, Input
-from keras.layers import MaxPooling2D
-from keras.layers import SeparableConv2D
-from keras.layers import ZeroPadding2D, Add
-from keras.models import Model
-from keras.models import Sequential
-from keras.regularizers import l2
+from tensorflow.keras import layers
+from tensorflow.keras.layers import Activation, Dropout, Conv2D, Dense
+from tensorflow.keras.layers import BatchNormalization
+from tensorflow.keras.layers import Flatten
+from tensorflow.keras.layers import GlobalAveragePooling2D
+from tensorflow.keras.layers import InputLayer, Input
+from tensorflow.keras.layers import MaxPooling2D
+from tensorflow.keras.layers import SeparableConv2D
+from tensorflow.keras.layers import ZeroPadding2D, Add
+from tensorflow.keras.models import Model
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.regularizers import l2
 
 
 # from VIPLFaceNet
@@ -334,8 +334,8 @@ def tiny_XCEPTION(input_shape, num_classes, l2_regularization=0.01):
 
 
 def ResNet50(input_shape, num_classes):
-    # wrap ResNet50 from keras, because ResNet50 is so deep.
-    from keras.applications.resnet50 import ResNet50
+    # wrap ResNet50 from tensorflow.keras, because ResNet50 is so deep.
+    from tensorflow.keras.applications.resnet50 import ResNet50
     input_tensor = Input(shape=input_shape, name="input")
     x = ResNet50(include_top=False,
                  weights=None,

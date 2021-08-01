@@ -1,7 +1,7 @@
 import os
 import time
-from keras.utils import to_categorical
-from keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.utils import to_categorical
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import cv2
 import numpy as np
 import random
@@ -185,8 +185,9 @@ class DataGenerator(object):
         return image_array
 
     def _wrap(self, image_array, targets):
-        return [{'input': image_array},
-                {'predictions': targets}]
+        #return [{'input': image_array},
+        #        {'predictions': targets}]
+        return (image_array, targets)
 
 
 def augment_data_to_dir():

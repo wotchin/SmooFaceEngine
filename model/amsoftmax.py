@@ -1,8 +1,8 @@
 import tensorflow as tf
-from keras import backend as K
-from keras.layers import Dropout
-from keras.engine.topology import Layer
-from keras.models import Model
+from tensorflow.keras import backend as K
+from tensorflow.keras.layers import Dropout
+from tensorflow.keras.layers import Layer
+from tensorflow.keras.models import Model
 
 
 class AMSoftmax(Layer):
@@ -63,7 +63,7 @@ def amsoftmax_loss(y_true, y_pred, scale=30.0, margin=0.35):
     added_margin = K.reshape(added_margin, shape=(-1, 1))
     added_embedding_feature = tf.subtract(y_pred, y_true * added_margin) * s
 
-    cross_entropy = tf.nn.softmax_cross_entropy_with_logits_v2(labels=y_true,
+    cross_entropy = tf.nn.softmax_cross_entropy_with_logits(labels=y_true,
                                                                logits=added_embedding_feature)
     loss = tf.reduce_mean(cross_entropy)
     return loss
@@ -79,8 +79,9 @@ def wrap_cnn(model, feature_layer, input_shape, num_classes):
 
 
 def load_model(filepath):
-    import keras.models
-    model = keras.models.load_model(filepath=filepath,
+    print(filepath)
+    from tensorflow.keras.models import load_model
+    model = load_model(filepath,
                                     custom_objects={"AMSoftmax": AMSoftmax,
                                                     "amsoftmax_loss": amsoftmax_loss})
     return model

@@ -52,7 +52,7 @@ You can search the following papers in [Google Scholar](https://scholar.google.c
 
 ## Open source projects
 
-1. https://github.com/xiangrufan/keras-mtcnn
+1. https://github.com/xiangrufan/tensorflow.keras-mtcnn
 2. https://github.com/happynear/AMSoftmax
 3. https://github.com/Joker316701882/Additive-Margin-Softmax
 4. https://github.com/hao-qiang/AM-Softmax
@@ -70,3 +70,13 @@ Apache license version 2.0
 1. give train.py arguments: for different training set
 2. refactor: to optimize code
 3. etc.
+
+#Further Reading
+
+1. Papers list: there are some papers that I think important.
+    >https://github.com/wotchin/paper-list
+2. InsightFace: some implementations of state-of-the-art face recognition algorithm.
+    >https://github.com/deepinsight/insightface
+3. wider face results: we can see state-of-the-art model for wider face testing dataset.
+    >http://mmlab.ie.cuhk.edu.hk/projects/WIDERFace/WiderFace_Results.html
+4. 

@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-from keras import backend as K
+from tensorflow.keras import backend as K
 
 
 def rebuild_model(model, input_layer="input", output_layer="feature"):
@@ -13,13 +13,15 @@ def rebuild_model(model, input_layer="input", output_layer="feature"):
     __output_layer = model.get_layer(name=output_layer)
     func = K.function([__input_layer.input],
                       [__output_layer.output])
-    input_shape = __input_layer.input_shape[1:]
+    # the following code is different between low version and high version on tensorflow.keras.
+    input_shape = __input_layer.input_shape[0][1:]
     output_shape = __output_layer.output_shape[1:]
     return func, input_shape, output_shape
 
 
 def get_feature_function(model, **kwargs):
     feature_function, input_shape, _ = rebuild_model(model, **kwargs)
+    input_shape = tuple(input_shape[:-1])
 
     def inner(img):
         if isinstance(img, str):
@@ -29,7 +31,7 @@ def get_feature_function(model, **kwargs):
             raise Exception("img must be 'numpy.ndarray' type.But input #1 argument type is "
                             + str(type(img)))
         # preprocess
-        img = cv2.resize(img, input_shape[:-1])
+        img = cv2.resize(img, input_shape)
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         img = img / 256
         img = np.expand_dims(img, -1)

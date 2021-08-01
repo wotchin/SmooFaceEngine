@@ -12,7 +12,7 @@ from model.amsoftmax import load_model
 from utils.feature import get_feature_function
 from utils.measure import kappa, cosine_similarity
 
-model_path = "./trained_models/tiny_XCEPTION.hdf5"
+model_path = "./trained_models/ResNet18.01-0.478571.hdf5"
 img_path = "./data/olivetti_faces/olivettifaces.jpg"
 test_data_path = "./olive"
 input_shape = (64, 64, 1)
