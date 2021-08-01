@@ -1,51 +1,46 @@
 # SmooFaceEngine
-An open source face recognition engine named SmooFaceEngine.
+An open source face recognition engine.
+
+Support for Tensorflow-2.0.0+ @[branch tensorflow2.0.0+]()
 
 [Read more relational papers](https://github.com/wotchin/paper-list/blob/master/computer-vision.md)
 
 [勘误表(errate)](https://github.com/wotchin/SmooFaceEngine/wiki/errata) 
 
 [Chinese Wiki](https://github.com/wotchin/SmooFaceEngine/wiki)
+
 # Introduction
 Let us see something about this project now.
 ## What is this project?
 This project is an open source project about
- face recognition. In the project, we implemented a face 
- recognition engine that was one-shot training.
-
-## Why did this?
-JUST FOR FUN!
-I think I may be not a face recognition expert, but a geeker.
+ face recognition. In the project, we implemente a face 
+ recognition engine with one-shot training.
 
 # Principle of SmooFace
 In this project,
- we implemented some CNN, such as VGGNet, VIPL face net, 
- ResNet and XCEPTION etc.
+ we implemente some CNNs (VGGNet, VIPL face net, ResNet, XCEPTION, et al) to recognize face image.
 
-We used AM-Softmax loss as the cost function here, rather than 
-triple loss or other metric learning loss functions. This is because 
-AM-Softmax has less training time, but the accuracy is still good.
+Here, we use AM-Softmax loss as the cost function rather than 
+triple loss or other metric learning loss functions because AM-Softmax has less training time but accuracy is still good.
 
 # How to use?
-This project is a demo. In order to see the experimental results, I trained the model 
-with a small data set. I used data augmentation in this project, so that I can get 
+This project is **only a demo**. In order to see the experimental results, we trained a model 
+with small data. We use data augmentation in this project, so that we can get 
 a robust model.
 If you want to use this project in your production environment, you should **do more**.
 ## Train
-```python train.py```
+```python3 train.py```
 ## Predict
-```python predict.py```
+```python3 predict.py```
 ## Web API
 >http://127.0.0.1:8080/test
 
 ## Dependencies
-    Python 3.5
-    flask 1.1.1
-    h5py 2.10.0
-    Keras 2.3.1
-    numpy 1.17.1
-    scipy 1.3.2
-    tensorflow 1.14.0
+    Python 3.6+
+    Others: 
+    ```
+    pip3 install -r requirements.txt
+    ```
     
 # Reference
 ## Papers
