@@ -1,7 +1,7 @@
 # SmooFaceEngine
 An open source face recognition engine named SmooFaceEngine.
 
-Detailed technical principles: [《Python人脸识别：从入门到工程实践》](https://item.jd.com/12593612.html)
+[Read more relational papers](https://github.com/wotchin/paper-list/blob/master/computer-vision.md)
 
 [勘误表(errate)](https://github.com/wotchin/SmooFaceEngine/wiki/errata) 
 
@@ -37,6 +37,16 @@ If you want to use this project in your production environment, you should **do 
 ```python predict.py```
 ## Web API
 >http://127.0.0.1:8080/test
+
+## Dependencies
+    Python 3.5
+    flask 1.1.1
+    h5py 2.10.0
+    Keras 2.3.1
+    numpy 1.17.1
+    scipy 1.3.2
+    tensorflow 1.14.0
+    
 # Reference
 ## Papers
 You can search the following papers in [Google Scholar](https://scholar.google.com/)
@@ -59,7 +69,7 @@ You can search the following papers in [Google Scholar](https://scholar.google.c
 5. https://github.com/ageitgey/face_recognition
 6. https://github.com/oarriaga/face_classification
 7. https://github.com/seetaface/SeetaFaceEngine
-
+8. https://github.com/jiankangdeng/handbook
 
 # LICENSE
 Apache license version 2.0
